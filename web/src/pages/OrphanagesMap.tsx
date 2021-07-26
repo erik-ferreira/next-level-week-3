@@ -1,13 +1,33 @@
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FiPlus } from "react-icons/fi";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { FiPlus, FiArrowRight } from "react-icons/fi";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import api from "../services/api";
 
 import mapMarkerImg from "../images/map-marker.svg";
+import mapIcon from "../utils/mapIcon";
 
-import "../styles/orphanages-map.css";
+import "../styles/pages/orphanages-map.css";
 import "leaflet/dist/leaflet.css";
 
+interface Orphanage {
+  id: number;
+  latitude: number;
+  longitude: number;
+  name: string;
+}
+
 function OrphanagesMap() {
+  const [listOrphanages, setListOrphanages] = useState<Orphanage[]>([]);
+
+  useEffect(() => {
+    api.get("/orphanages").then((response) => {
+      const orphanages = response.data;
+
+      setListOrphanages(orphanages);
+    });
+  }, []);
+
   return (
     <div id="page-map">
       <aside>
@@ -39,9 +59,28 @@ function OrphanagesMap() {
         {/* <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
         /> */}
+        {listOrphanages.map((orphanage) => (
+          <Marker
+            key={orphanage.id}
+            position={[orphanage.latitude, orphanage.longitude]}
+            icon={mapIcon}
+          >
+            <Popup
+              closeButton={false}
+              minWidth={240}
+              maxWidth={240}
+              className="map-popup"
+            >
+              {orphanage.name}
+              <Link to={`/orphanages/${orphanage.id}`}>
+                <FiArrowRight size={20} color="#FFF" />
+              </Link>
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
 
-      <Link to="" className="create-orphanage">
+      <Link to="/orphanages/create" className="create-orphanage">
         <FiPlus size={32} color="#FFF" />
       </Link>
     </div>
