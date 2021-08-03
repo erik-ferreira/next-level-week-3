@@ -4,7 +4,7 @@ export default {
   render(image: Image) {
     const { id, path } = image;
 
-    return { id, url: `http://localhost:3333/uploads/${path}` };
+    return { id, url: `http://10.0.0.106:3333/uploads/${path}` };
   },
 
   renderMany(images: Image[]) {
