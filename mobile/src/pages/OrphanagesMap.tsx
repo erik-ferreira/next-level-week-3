@@ -23,20 +23,24 @@ interface OrphanagesItem {
 
 function OrphanagesMap() {
   const [orphanages, setOrphanages] = useState<OrphanagesItem[]>([]);
-  const { navigate } = useNavigation();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    api.get("/orphanages").then((response) => {
-      setOrphanages(response.data);
+    const unsubscribe = navigation.addListener("focus", () => {
+      api.get("/orphanages").then((response) => {
+        setOrphanages(response.data);
+      });
     });
-  }, []);
+
+    return unsubscribe;
+  }, [navigation]);
 
   function handleNavigateToOrphanageDetail(id: number) {
-    navigate("OrphanageDetails", { id });
+    navigation.navigate("OrphanageDetails", { id });
   }
 
   function handleNavigateToCreateOrphanage() {
-    navigate("SelectMapPosition");
+    navigation.navigate("SelectMapPosition");
   }
 
   return (
