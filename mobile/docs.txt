@@ -1,0 +1,2 @@
+Instalar o MapView do expo:
+  expo install react-native-maps
